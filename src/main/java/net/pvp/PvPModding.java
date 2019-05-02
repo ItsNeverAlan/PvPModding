@@ -7,4 +7,8 @@ public class PvPModding {
 
     public static Logger LOGGER = LogManager.getLogger("PvP");
 
+    public static boolean isEnabled() {
+        return true;
+    }
+
 }

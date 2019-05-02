@@ -7,6 +7,11 @@
       <module name="ClientAPI.example" target="1.8" />
       <module name="ClientAPI.main" target="1.8" />
       <module name="ClientAPI.test" target="1.8" />
+      <module name="PvPModding.api" target="1.8" />
+      <module name="PvPModding.debug" target="1.8" />
+      <module name="PvPModding.example" target="1.8" />
+      <module name="PvPModding.main" target="1.8" />
+      <module name="PvPModding.test" target="1.8" />
     </bytecodeTargetLevel>
   </component>
 </project>
