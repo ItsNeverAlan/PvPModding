@@ -1,19 +1,3 @@
-/*
- * Copyright 2018 ImpactDevelopment
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 buildscript {
     repositories {
         maven {
@@ -38,13 +22,17 @@ plugins {
     id 'maven-publish'
 }
 
+configurations {
+    embed
+    compile.extendsFrom(embed)
+}
+
 apply plugin: 'net.minecraftforge.gradle.tweaker-client'
 apply plugin: 'org.spongepowered.mixin'
-apply from: 'methods.gradle'
 
-version = getVersionFromJava()
+version = 1.0
 
-sourceCompatibility = targetCompatibility = '1.8' // Needed so Eclipse task generates correctly
+sourceCompatibility = targetCompatibility = '1.8'
 compileJava {
     sourceCompatibility = targetCompatibility = '1.8'
 }
@@ -62,19 +50,10 @@ reobf {
     jar {
         mappingType = 'SEARGE'
     }
-    releaseJar {
-        mappingType = 'NOTCH'
-        classpath = sourceSets.main.compileClasspath
-    }
 }
 
 repositories {
     mavenCentral()
-
-    maven {
-        name = 'impactdevelopment-repo'
-        url = 'https://impactdevelopment.github.io/maven/'
-    }
 
     maven {
         name = 'spongepowered-repo'
@@ -83,99 +62,41 @@ repositories {
 }
 
 dependencies {
-    compile "com.github.ZeroMemes:Alpine:${project.alpineVersion}"
-    compile "com.github.ImpactDevelopment:SimpleTweaker:${project.simpleTweakerVersion}"
-    compile "net.jodah:typetools:${project.typetoolsVersion}"
     compile("org.spongepowered:mixin:${project.mixinVersion}") {
-        // Mixin includes a lot of dependencies that are too up-to-date
         exclude module: 'launchwrapper'
         exclude module: 'guava'
         exclude module: 'gson'
         exclude module: 'commons-io'
         exclude module: 'log4j-core'
     }
-    compile ("pw.knx:feather:${project.featherVersion}") {
-        exclude module: 'lwjgl'
-    }
-    testCompile "junit:junit:${project.junitVersion}"
 }
 
 minecraft {
     version = project.minecraftVersion
     mappings = project.mappings
-    tweakClass = 'clientapi.load.ClientTweaker'
+    tweakClass = 'net.pvp.launch.PvPTweaker'
     runDir = 'run'
-
-    // The sources jar should use SRG names not MCP to ensure compatibility with all mappings
     makeObfSourceJar = true
-}
-
-apply from: 'tasks.gradle'
-
-artifacts {
-    archives jar
-    archives releaseJar
-    archives sourceJar
-    archives javadocJar
-    archives makeCDK
 }
 
 mixin {
     defaultObfuscationEnv notch
-    add sourceSets.main, 'mixins.capi.refmap.json'
-    add sourceSets.example, 'mixins.client.refmap.json'
+    add sourceSets.main, 'mixins.mitw.refmap.json'
+    add sourceSets.example, 'mixins.mitw.refmap.json'
 }
 
-// Create the pom configuration:
-def pomConfig = {
-    licenses {
-        license {
-            name 'The Apache Software License, Version 2.0'
-            url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
-            distribution 'repo'
-        }
-    }
-    developers {
-        developer {
-            id 'brady'
-            name 'Brady'
-            email 'zeromemesdev@gmail.com'
-        }
-        developer {
-            id 'leaf'
-            name 'LeafHacker'
-            email 'leafhacker@yahoo.com'
-        }
-    }
-
-    scm {
-        url project.url
-    }
-}
-
-// Create the publication with the pom configuration:
-publishing {
-    repositories {
-        maven {
-            url "build/maven"
-        }
-    }
-    publications {
-        mavenJava(MavenPublication) {
-            from components.java
-            artifact releaseJar
-            artifact sourceJar
-            artifact javadocJar
-            groupId project.group
-            artifactId project.name
-            version project.version
-            pom.withXml {
-                def root = asNode()
-                root.appendNode('description', project.description)
-                root.appendNode('name', project.name)
-                root.appendNode('url', project.url)
-                root.children().last() + pomConfig
-            }
+jar {
+    manifest.attributes(
+            //"MixinConfigs": 'mixins.hyperium.json, mixins.ctjs.json',
+            "MixinConfigs": 'mixins.pvp.json',
+            "TweakClass": 'net.pvp.launch.PvPTweaker',
+            "TweakOrder": 0,
+            "Manifest-Version": 1.0
+    )
+    configurations.embed.each { dep ->
+        from(project.zipTree(dep)) {
+            exclude 'META-INF', 'META-INF/**'
+            exclude 'org/jetbrains/annotations', 'org/jetbrains/annotations/**'
         }
     }
 }
