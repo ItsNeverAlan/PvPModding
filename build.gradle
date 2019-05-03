@@ -39,19 +39,6 @@ sourceCompatibility = 1.8
 targetCompatibility = 1.8
 compileJava.options.encoding = 'UTF-8'
 
-//sourceSets {
-//    example {
-//        compileClasspath += main.compileClasspath + main.runtimeClasspath + main.output
-//    }
-//    debug {
-//        compileClasspath += example.compileClasspath + example.output
-//    }
-//    main {
-//
-//        ext.refMap = "mixins.pvp.refmap.json"
-//    }
-//}
-
 repositories {
     mavenCentral()
 
@@ -67,7 +54,6 @@ dependencies {
         exclude module: 'guava'
         exclude module: 'gson'
         exclude module: 'commons-io'
-        //exclude module: 'log4j-core'
     }
 }
 
@@ -97,7 +83,6 @@ jar {
 
 jar {
     manifest.attributes(
-            //"MixinConfigs": 'mixins.hyperium.json, mixins.ctjs.json',
             "MixinConfigs": 'mixins.pvp.json',
             "TweakClass": 'net.pvp.launch.PvPTweaker',
             "TweakOrder": 0,
