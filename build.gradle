@@ -67,7 +67,6 @@ minecraft {
 }
 
 mixin {
-    defaultObfuscationEnv notch
     add sourceSets.main, 'mixins.mitw.refmap.json'
 }
 
