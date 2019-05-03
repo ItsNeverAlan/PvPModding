@@ -67,6 +67,7 @@ minecraft {
 }
 
 mixin {
+    defaultObfuscationEnv searge
     add sourceSets.main, 'mixins.mitw.refmap.json'
 }
 
