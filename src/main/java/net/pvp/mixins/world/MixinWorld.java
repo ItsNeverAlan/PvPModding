@@ -1,4 +1,4 @@
-package net.pvp.mixins;
+package net.pvp.mixins.world;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.SoundEvents;

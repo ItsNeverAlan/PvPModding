@@ -6,12 +6,14 @@
   "compatibilityLevel": "JAVA_8",
   "verbose": false,
   "client": [
+    "MixinMinecraft",
     "MixinEntityPlayer",
     "MixinEntityLivingBase",
     "MixinEntity",
-    "MixinWorld",
     "item.MixinItem",
     "item.MixinItemSword",
-    "renderer.MixinItemRenderer"
+    "renderer.MixinItemRenderer",
+    "world.MixinWorld",
+    "world.MixinGameRules"
   ]
 }

@@ -25,6 +25,8 @@ import net.minecraft.stats.StatList;
 import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.text.TextComponentString;
+import net.minecraft.world.GameRules;
 import net.minecraft.world.LockCode;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
@@ -187,15 +189,17 @@ public abstract class MixinEntityPlayer extends MixinEntityLivingBase {
                     f1 = EnchantmentHelper.getModifierForCreature(thePlayer.getHeldItemMainhand(), EnumCreatureAttribute.UNDEFINED);
                 }
 
+                float f2 = 1.0f;
+
                 if (!PvPModding.isEnabled()) {
-                    float f2 = thePlayer.getCooledAttackStrength(0.5F);
+                    f2 = thePlayer.getCooledAttackStrength(0.5F);
                     f = f * (0.2F + f2 * f2 * 0.8F);
                     f1 = f1 * f2;
+                    this.resetCooldown();
                 }
-                this.resetCooldown();
 
                 if (f > 0.0F || f1 > 0.0F) {
-                    boolean flag = true;
+                    boolean flag = f2 > 0.9f;
                     boolean flag1 = false;
                     int i = 0;
                     i = i + EnchantmentHelper.getKnockbackModifier(thePlayer);
@@ -217,7 +221,7 @@ public abstract class MixinEntityPlayer extends MixinEntityLivingBase {
                     boolean flag3 = false;
                     double d0 = (double) (this.distanceWalkedModified - this.prevDistanceWalkedModified);
 
-                    if (flag && !flag2 && !flag1 && this.onGround && d0 < (double) this.getAIMoveSpeed()) {
+                    if (!PvPModding.isEnabled() && flag && !flag2 && !flag1 && this.onGround && d0 < (double) this.getAIMoveSpeed()) {
                         ItemStack itemstack = this.getHeldItem(EnumHand.MAIN_HAND);
 
                         if (itemstack.getItem() instanceof ItemSword) {
@@ -255,7 +259,7 @@ public abstract class MixinEntityPlayer extends MixinEntityLivingBase {
                             this.motionZ *= 0.6D;
                         }
 
-                        if (flag3) {
+                        if (flag3 && !PvPModding.isEnabled()) {
                             float f3 = 1.0F + EnchantmentHelper.getSweepingDamageRatio(thePlayer) * f;
 
                             for (EntityLivingBase entitylivingbase : this.world.getEntitiesWithinAABB(EntityLivingBase.class, targetEntity.getEntityBoundingBox().grow(1.0D, 0.25D, 1.0D))) {
@@ -265,10 +269,9 @@ public abstract class MixinEntityPlayer extends MixinEntityLivingBase {
                                 }
                             }
 
-                            if (!PvPModding.isEnabled()) {
-                                this.world.playSound((EntityPlayer) null, this.posX, this.posY, this.posZ, SoundEvents.ENTITY_PLAYER_ATTACK_SWEEP, this.getSoundCategory(), 1.0F, 1.0F);
-                                this.spawnSweepParticles();
-                            }
+                            this.world.playSound((EntityPlayer) null, this.posX, this.posY, this.posZ, SoundEvents.ENTITY_PLAYER_ATTACK_SWEEP, this.getSoundCategory(), 1.0F, 1.0F);
+                            this.spawnSweepParticles();
+
                         }
 
                         if (targetEntity instanceof EntityPlayerMP && targetEntity.velocityChanged) {
@@ -280,7 +283,8 @@ public abstract class MixinEntityPlayer extends MixinEntityLivingBase {
                         }
 
                         if (flag2) {
-                            this.world.playSound((EntityPlayer) null, this.posX, this.posY, this.posZ, SoundEvents.ENTITY_PLAYER_ATTACK_CRIT, this.getSoundCategory(), 1.0F, 1.0F);
+                            if (!PvPModding.isEnabled())
+                                this.world.playSound((EntityPlayer) null, this.posX, this.posY, this.posZ, SoundEvents.ENTITY_PLAYER_ATTACK_CRIT, this.getSoundCategory(), 1.0F, 1.0F);
                             this.onCriticalHit(targetEntity);
                         }
 
@@ -344,6 +348,9 @@ public abstract class MixinEntityPlayer extends MixinEntityLivingBase {
                         if (flag4) {
                             targetEntity.extinguish();
                         }
+                    }
+                    if (thePlayer instanceof EntityPlayerMP) {
+                        thePlayer.sendMessage(new TextComponentString("hi " + f));
                     }
                 }
             }

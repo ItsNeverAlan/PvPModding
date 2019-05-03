@@ -21,6 +21,7 @@ import java.util.UUID;
 
 @Mixin(Entity.class)
 public abstract class MixinEntity {
+    @Shadow protected boolean inPortal;
     @Shadow public net.minecraft.entity.Entity ridingEntity;
     @Shadow @Final
     private List<Entity> riddenByEntities;

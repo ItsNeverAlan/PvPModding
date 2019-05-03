@@ -32,7 +32,6 @@ public abstract class MixinItemSword extends Item {
             return super.onItemRightClick(worldIn,playerIn, handIn);
         }
         playerIn.setActiveHand(handIn);
-//        EntityUtil.setUseCount(playerIn, 72000);
         return new ActionResult<>(EnumActionResult.SUCCESS, playerIn.getHeldItem(handIn));
     }
 
