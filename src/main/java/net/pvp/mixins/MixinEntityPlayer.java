@@ -15,6 +15,7 @@ import net.minecraft.init.MobEffects;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.InventoryEnderChest;
+import net.minecraft.item.EnumAction;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemSword;
 import net.minecraft.network.play.server.SPacketEntityVelocity;
@@ -169,6 +170,40 @@ public abstract class MixinEntityPlayer extends MixinEntityLivingBase {
     public void spawnSweepParticles(CallbackInfo ci) {
         if (PvPModding.isEnabled()) {
             ci.cancel();
+        }
+    }
+
+    /**
+     * @author LeeGod
+     * @reason add blocking
+     */
+    @Overwrite
+    protected void damageEntity(DamageSource damageSrc, float damageAmount)
+    {
+        if (!this.isEntityInvulnerable(damageSrc))
+        {
+            if (!damageSrc.isUnblockable() && this.isBlocking() && damageAmount > 0.0F)
+            {
+                damageAmount = (1.0F + damageAmount) * 0.5F;
+            }
+            damageAmount = this.applyArmorCalculations(damageSrc, damageAmount);
+            damageAmount = this.applyPotionDamageCalculations(damageSrc, damageAmount);
+            float f = damageAmount;
+            damageAmount = Math.max(damageAmount - this.getAbsorptionAmount(), 0.0F);
+            this.setAbsorptionAmount(this.getAbsorptionAmount() - (f - damageAmount));
+
+            if (damageAmount != 0.0F)
+            {
+                this.addExhaustion(damageSrc.getHungerDamage());
+                float f1 = this.getHealth();
+                this.setHealth(this.getHealth() - damageAmount);
+                this.getCombatTracker().trackDamage(damageSrc, f1, damageAmount);
+
+                if (damageAmount < 3.4028235E37F)
+                {
+                    this.addStat(StatList.DAMAGE_TAKEN, Math.round(damageAmount * 10.0F));
+                }
+            }
         }
     }
 
@@ -349,12 +384,18 @@ public abstract class MixinEntityPlayer extends MixinEntityLivingBase {
                             targetEntity.extinguish();
                         }
                     }
-                    if (thePlayer instanceof EntityPlayerMP) {
-                        thePlayer.sendMessage(new TextComponentString("hi " + f));
-                    }
                 }
             }
         }
+    }
+
+    public boolean isBlocking()
+    {
+        if (this.getActiveHand() != null) {
+            ItemStack itemStack = this.getHeldItem(this.getActiveHand());
+            return itemStack.getItem().getItemUseAction(itemStack) == EnumAction.BLOCK;
+        }
+        return false;
     }
 
 }
