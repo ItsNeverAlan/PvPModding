@@ -39,7 +39,6 @@ public abstract class MixinEntityLivingBase extends MixinEntity {
     @Shadow public float limbSwingAmount;
     @Shadow public boolean potionsNeedUpdate;
     @Shadow public boolean dead;
-    @Shadow public CombatTracker combatTracker;
     @Shadow @Nullable
     public EntityLivingBase revengeTarget;
     @Shadow protected AbstractAttributeMap attributeMap;

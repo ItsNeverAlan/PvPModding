@@ -17,21 +17,14 @@ buildscript {
     }
 }
 
-plugins {
-    id 'java'
-    id 'maven-publish'
-}
-
 configurations {
     embed
     compile.extendsFrom(embed)
-
-    shade
-    compile.extendsFrom shade
 }
 
-apply plugin: 'net.minecraftforge.gradle.tweaker-client'
+apply plugin: 'net.minecraftforge.gradle.forge'
 apply plugin: 'org.spongepowered.mixin'
+apply plugin: 'java'
 
 version = 1.0
 
@@ -60,10 +53,7 @@ dependencies {
 minecraft {
     version = project.minecraftVersion
     mappings = project.mappings
-    tweakClass = 'net.pvp.launch.PvPTweaker'
     runDir = 'run'
-    clientJvmArgs = ["-XX:-DisableExplicitGC"]
-    makeObfSourceJar = false
 }
 
 mixin {
@@ -71,27 +61,19 @@ mixin {
     add sourceSets.main, 'mixins.mitw.refmap.json'
 }
 
-jar {
-    dependsOn configurations.compile
-    from {
-        configurations.embed.collect {
-            it.isDirectory() ? it : zipTree(it)
-        }
-    }
-    exclude 'META-INF/*.RSA', 'META-INF/*.SF', 'META-INF/*.DSA'
-}
 
 jar {
     manifest.attributes(
             "MixinConfigs": 'mixins.pvp.json',
-            "TweakClass": 'net.pvp.launch.PvPTweaker',
+            "TweakClass": 'org.spongepowered.asm.launch.MixinTweaker',
+            "FMLCorePluginContainsFMLMod": 'true',
+            "FMLCorePlugin": 'net.pvp.launch.MixinLoader',
             "TweakOrder": 0,
             "Manifest-Version": 1.0
     )
-    configurations.embed.each { dep ->
-        from(project.zipTree(dep)) {
-            exclude 'META-INF', 'META-INF/**'
-            exclude 'org/jetbrains/annotations', 'org/jetbrains/annotations/**'
-        }
+    dependsOn configurations.compile
+    from(configurations.embed.collect { it.isDirectory() ? it : zipTree(it) }) {
+
+        exclude "LICENSE.txt", "META-INF/MANIFSET.MF", "META-INF/maven/**", "META-INF/*.RSA", "META-INF/*.SF", 'META-INF/*.DSA'
     }
 }

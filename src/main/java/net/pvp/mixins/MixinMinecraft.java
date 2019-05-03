@@ -113,7 +113,6 @@ public abstract class MixinMinecraft {
     @Shadow public GameSettings gameSettings;
     @Shadow public CreativeSettings creativeSettings;
     @Shadow  public MouseHelper mouseHelper;
-    @Shadow public File gameDir;
     @Shadow private File fileAssets;
     @Shadow private String launchedVersion;
     @Shadow private String versionType;
@@ -129,28 +128,16 @@ public abstract class MixinMinecraft {
     @Shadow long startNanoTime;
     @Shadow private boolean jvm64bit;
     @Shadow private boolean isDemo;
-    @Shadow @Nullable
-    private NetworkManager networkManager;
     @Shadow private boolean integratedServerIsRunning;
-    @Shadow public Profiler profiler;
     @Shadow private long debugCrashKeyPressTime;
-    @Shadow private IReloadableResourceManager resourceManager;
-    @Shadow  private MetadataSerializer metadataSerializer;
     @Shadow private List<IResourcePack> defaultResourcePacks;
-    @Shadow private DefaultResourcePack defaultResourcePack;
-    @Shadow private ResourcePackRepository resourcePackRepository;
-    @Shadow private LanguageManager languageManager;
     @Shadow private BlockColors blockColors;
     @Shadow private ItemColors itemColors;
-    @Shadow private Framebuffer framebuffer;
     @Shadow private TextureMap textureMapBlocks;
-    @Shadow private SoundHandler soundHandler;
-    @Shadow private MusicTicker musicTicker;
     @Shadow private ResourceLocation mojangLogo;
     @Shadow private MinecraftSessionService sessionService;
     @Shadow private SkinManager skinManager;
     @Shadow private Queue<FutureTask<? >> scheduledTasks;
-    @Shadow private Thread thread;
     @Shadow private ModelManager modelManager;
     @Shadow private BlockRendererDispatcher blockRenderDispatcher;
     @Shadow private GuiToast toastGui;

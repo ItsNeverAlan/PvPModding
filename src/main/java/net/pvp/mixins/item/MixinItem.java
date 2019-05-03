@@ -15,11 +15,7 @@ import org.spongepowered.asm.mixin.Shadow;
 @Mixin(Item.class)
 public abstract class MixinItem {
 
-    @Shadow
-    private String translationKey;
-
     @Shadow public abstract int getItemStackLimit();
-    @Shadow public abstract String getTranslationKey();
 
     @Shadow
     public EnumActionResult onItemUse(EntityPlayer player, World worldIn, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ)
