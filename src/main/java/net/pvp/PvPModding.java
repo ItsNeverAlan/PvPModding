@@ -14,19 +14,11 @@ public class PvPModding {
 
     /* TEST */
     public static boolean isGameruleEnabled() {
-        boolean bol = Minecraft.getMinecraft().getIntegratedServer() != null
+        return Minecraft.getMinecraft().getIntegratedServer() != null
                 && Minecraft.getMinecraft().getIntegratedServer().getEntityWorld()
                 .getGameRules().hasRule("oldCombatMechanics")
                 && Minecraft.getMinecraft().getIntegratedServer().getEntityWorld()
                 .getGameRules().getBoolean("oldCombatMechanics");
-        if (bol) {
-            System.out.println((Minecraft.getMinecraft().getIntegratedServer() != null) +
-                    " " + (Minecraft.getMinecraft().getIntegratedServer().getEntityWorld()
-                    .getGameRules().hasRule("oldCombatMechanics")) +
-                    " " + (Minecraft.getMinecraft().getIntegratedServer().getEntityWorld()
-                    .getGameRules().getBoolean("oldCombatMechanics")));
-        }
-        return bol;
     }
 
 }

@@ -250,8 +250,4 @@ public abstract class MixinMinecraft {
         }
     }
 
-    @Inject(method = "runTick", at = @At("RETURN"))
-    public void runTick(CallbackInfo info) {
-    }
-
 }

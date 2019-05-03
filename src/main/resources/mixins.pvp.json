@@ -1,8 +1,8 @@
 {
   "required": true,
   "package": "net.pvp.mixins",
-  "refmap": "mixins.capi.refmap.json",
-  "minVersion": "0.7.8",
+  "refmap": "mixins.pvp.refmap.json",
+  "minVersion": "0.7.7",
   "compatibilityLevel": "JAVA_8",
   "verbose": false,
   "client": [
