@@ -10,9 +10,11 @@ import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.ItemSword;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.EnumHandSide;
 import net.minecraft.util.math.MathHelper;
+import net.pvp.PvPModding;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
@@ -106,9 +108,9 @@ public abstract class MixinItemRenderer {
                         this.transformSideFirstPerson(enumhandside, p_187457_7_);
                         break;
                     case BLOCK:
-//                        this.transformFirstPersonItem(flag, p_187457_7_);
-                        this.transformSideFirstPerson(enumhandside, 0);
-                        this.func_178103_d();
+                        this.transformSideFirstPerson(enumhandside, p_187457_7_);
+                        if (PvPModding.isEnabled() && stack.getItem() instanceof ItemSword)
+                            this.func_178103_d(enumhandside);
                         break;
                     case BOW:
                         this.transformSideFirstPerson(enumhandside, p_187457_7_);
@@ -155,12 +157,15 @@ public abstract class MixinItemRenderer {
         GlStateManager.popMatrix();
     }
 
-    private void func_178103_d()
+    private void func_178103_d(EnumHandSide hand)
     {
-        GlStateManager.translate(-0.5F, 0.2F, 0.0F);
-        GlStateManager.rotate(30.0F, 0.0F, 1.0F, 0.0F);
-        GlStateManager.rotate(-80.0F, 1.0F, 0.0F, 0.0F);
-        GlStateManager.rotate(60.0F, 0.0F, 1.0F, 0.0F);
+        int i = hand == EnumHandSide.RIGHT ? 1 : -1;
+        // angle x y z
+        //GlStateManager.translate(-0.5F, 0.2F, 0.0F);
+        GlStateManager.translate((float) i * -0.1F, 0.1F, 0.1F);
+        GlStateManager.rotate((float) i * 40.0F, (float) i * 0.0F, 1.0F, 0.0F);
+        GlStateManager.rotate((float) i * -80.0F, (float) i * 1.0F, 0.0F, 0.0F);
+        GlStateManager.rotate((float) i * 60.0F, (float) i * -0.15F, 1.05F, 1.16F);
     }
 
     public float sqrt_float(float value)

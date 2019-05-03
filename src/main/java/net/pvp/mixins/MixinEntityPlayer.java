@@ -182,7 +182,9 @@ public abstract class MixinEntityPlayer extends MixinEntityLivingBase {
     {
         if (!this.isEntityInvulnerable(damageSrc))
         {
-            if (!damageSrc.isUnblockable() && this.isBlocking() && damageAmount > 0.0F)
+            if (PvPModding.isEnabled() &&
+                    this.getActiveItemStack().getItem() instanceof ItemSword
+                    && !damageSrc.isUnblockable() && this.isBlocking() && damageAmount > 0.0F)
             {
                 damageAmount = (1.0F + damageAmount) * 0.5F;
             }
@@ -239,7 +241,7 @@ public abstract class MixinEntityPlayer extends MixinEntityLivingBase {
                     int i = 0;
                     i = i + EnchantmentHelper.getKnockbackModifier(thePlayer);
 
-                    if (thePlayer.isSprinting() && flag) {
+                    if (!PvPModding.isEnabled() && thePlayer.isSprinting() && flag) {
                         thePlayer.world.playSound((EntityPlayer) null, thePlayer.posX, this.posY, this.posZ, SoundEvents.ENTITY_PLAYER_ATTACK_KNOCKBACK, this.getSoundCategory(), 1.0F, 1.0F);
                         ++i;
                         flag1 = true;
@@ -292,6 +294,7 @@ public abstract class MixinEntityPlayer extends MixinEntityLivingBase {
 
                             this.motionX *= 0.6D;
                             this.motionZ *= 0.6D;
+                            this.setSprinting(false);
                         }
 
                         if (flag3 && !PvPModding.isEnabled()) {

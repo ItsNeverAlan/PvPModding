@@ -14,6 +14,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.pvp.PvPModding;
 import net.pvp.util.EntityUtil;
+import net.pvp.util.PlayerUtil;
 import org.spongepowered.asm.mixin.Implements;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
@@ -31,6 +32,18 @@ public abstract class MixinItemSword extends Item {
         if (!PvPModding.isEnabled()) {
             return super.onItemRightClick(worldIn,playerIn, handIn);
         }
+
+        if (handIn == EnumHand.MAIN_HAND) {
+            ItemStack itemStackreverse = playerIn.getHeldItem(EnumHand.OFF_HAND);
+
+            if (!itemStackreverse.isEmpty()) {
+                ActionResult<ItemStack> actionResult = itemStackreverse.getItem().onItemRightClick(worldIn, playerIn, EnumHand.OFF_HAND);
+                if (actionResult.getType() == EnumActionResult.SUCCESS) {
+                    return new ActionResult<>(EnumActionResult.PASS, playerIn.getHeldItem(handIn));
+                }
+            }
+        }
+
         playerIn.setActiveHand(handIn);
         return new ActionResult<>(EnumActionResult.SUCCESS, playerIn.getHeldItem(handIn));
     }

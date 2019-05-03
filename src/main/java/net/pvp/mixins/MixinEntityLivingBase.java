@@ -1,6 +1,7 @@
 package net.pvp.mixins;
 
 import net.minecraft.advancements.CriteriaTriggers;
+import net.minecraft.command.CommandGameRule;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.ai.attributes.AbstractAttributeMap;
@@ -11,7 +12,10 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.MobEffects;
 import net.minecraft.inventory.EntityEquipmentSlot;
+import net.minecraft.item.EnumAction;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.ItemSword;
 import net.minecraft.potion.Potion;
 import net.minecraft.util.*;
 import net.minecraft.util.math.MathHelper;
@@ -126,6 +130,9 @@ public abstract class MixinEntityLivingBase extends MixinEntity {
 
     @Shadow public abstract EnumHand getActiveHand();
 
+    @Shadow public abstract ItemStack getActiveItemStack();
+
+    @Shadow protected double interpTargetPitch;
     private int deathEventsPosted;
 
     /**
@@ -167,7 +174,7 @@ public abstract class MixinEntityLivingBase extends MixinEntity {
 
                 boolean flag = false;
 
-                if (!PvPModding.isEnabled() && amount > 0.0F && this.canBlockDamageSource(source))
+                if (amount > 0.0F && this.canBlockDamageSource(source))
                 {
                     this.damageShield(amount);
                     amount = 0.0F;
@@ -328,6 +335,33 @@ public abstract class MixinEntityLivingBase extends MixinEntity {
 
                 return flag2;
             }
+        }
+    }
+
+    /**
+     * @author LeeGod
+     * @reason shield
+     * @return only for shield
+     */
+    @Overwrite
+    public boolean isActiveItemStackBlocking()
+    {
+        if (this.isHandActive() && !this.activeItemStack.isEmpty() && !(this.activeItemStack.getItem() instanceof ItemSword))
+        {
+            Item item = this.activeItemStack.getItem();
+
+            if (item.getItemUseAction(this.activeItemStack) != EnumAction.BLOCK)
+            {
+                return false;
+            }
+            else
+            {
+                return item.getMaxItemUseDuration(this.activeItemStack) - this.activeItemStackUseCount >= 5;
+            }
+        }
+        else
+        {
+            return false;
         }
     }
 
