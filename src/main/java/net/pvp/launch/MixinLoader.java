@@ -5,6 +5,7 @@ import java.util.*;
 import org.spongepowered.asm.launch.*;
 import org.spongepowered.asm.mixin.*;
 
+@IFMLLoadingPlugin.MCVersion("1.12.2")
 public class MixinLoader implements IFMLLoadingPlugin
 {
     public String getSetupClass() {
@@ -30,8 +31,5 @@ public class MixinLoader implements IFMLLoadingPlugin
         System.out.println("Injecting with IFMLLoadingPlugin.");
         MixinBootstrap.init();
         Mixins.addConfiguration("mixins.pvp.json");
-        MixinEnvironment environment = MixinEnvironment.getDefaultEnvironment();
-        environment.setObfuscationContext("searge");
-        environment.setSide(MixinEnvironment.Side.CLIENT);
     }
 }

@@ -42,12 +42,7 @@ repositories {
 }
 
 dependencies {
-    embed('org.spongepowered:mixin:0.7.7-SNAPSHOT') {
-        exclude module: 'launchwrapper'
-        exclude module: 'guava'
-        exclude module: 'gson'
-        exclude module: 'commons-io'
-    }
+    embed("org.spongepowered:mixin:0.7.11-SNAPSHOT") { transitive = false }
 }
 
 minecraft {
@@ -56,18 +51,35 @@ minecraft {
     runDir = 'run'
 }
 
+processResources {
+
+    inputs.property "version", project.version
+    inputs.property "mcversion", project.minecraft.version
+
+    from(sourceSets.main.resources.srcDirs) {
+
+        include 'mcmod.info'
+        expand 'version':project.version, 'mcversion':project.minecraft.version
+    }
+
+    from(sourceSets.main.resources.srcDirs) {
+
+        exclude 'mcmod.info'
+    }
+}
+
 mixin {
-    defaultObfuscationEnv searge
-    add sourceSets.main, 'mixins.mitw.refmap.json'
+    add sourceSets.main, "mixins.pvp.refmap.json"
 }
 
 
 jar {
     manifest.attributes(
             "MixinConfigs": 'mixins.pvp.json',
-            "TweakClass": 'org.spongepowered.asm.launch.MixinTweaker',
+            "ForceLoadAsMod": "true",
             "FMLCorePluginContainsFMLMod": 'true',
             "FMLCorePlugin": 'net.pvp.launch.MixinLoader',
+            "TweakerClass": "net.pvp.launch.PvPTweaker",
             "TweakOrder": 0,
             "Manifest-Version": 1.0
     )

@@ -46,6 +46,7 @@ import net.minecraft.util.datafix.DataFixer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.storage.ISaveFormat;
+import net.minecraftforge.fml.relauncher.FMLSecurityManager;
 import net.pvp.PvPModding;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
@@ -158,6 +159,7 @@ public abstract class MixinMinecraft {
     @Overwrite
     private void clickMouse()
     {
+        FMLSecurityManager
         if (this.leftClickCounter <= 0)
         {
             boolean modOn = PvPModding.isEnabled();

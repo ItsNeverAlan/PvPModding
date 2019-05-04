@@ -2,9 +2,7 @@
   "required": true,
   "package": "net.pvp.mixins",
   "refmap": "mixins.pvp.refmap.json",
-  "minVersion": "0.7.7",
   "compatibilityLevel": "JAVA_8",
-  "verbose": false,
   "client": [
     "MixinMinecraft",
     "MixinEntityPlayer",

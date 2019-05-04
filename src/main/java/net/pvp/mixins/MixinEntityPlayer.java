@@ -166,6 +166,10 @@ public abstract class MixinEntityPlayer extends MixinEntityLivingBase {
         }
     }
 
+    /**
+     * @author LeeGod
+     * @reason Remove cooldown
+     **/
     @Inject(method = "spawnSweepParticles", cancellable = true, at = @At("HEAD"))
     public void spawnSweepParticles(CallbackInfo ci) {
         if (PvPModding.isEnabled()) {
