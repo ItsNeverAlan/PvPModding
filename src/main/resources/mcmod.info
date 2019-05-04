@@ -2,15 +2,13 @@
   {
     "modid": "pvpmodding",
     "name": "PvPModding",
-    "description": "A modding for pvp.",
-    "version": "1.0",
-    "mcversion": "1.12.2",
+    "description": "",
+    "version": "${version}",
+    "mcversion": "${mcversion}",
     "url": "",
     "updateUrl": "",
-    "authorList": [
-      "LeeGod"
-    ],
-    "credits": "All users of it!",
+    "authorList": [],
+    "credits": "",
     "logoFile": "",
     "screenshots": [],
     "dependencies": []

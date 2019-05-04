@@ -1,70 +1,42 @@
 buildscript {
     repositories {
+        jcenter()
         maven {
-            name = 'forge'
-            url = 'http://files.minecraftforge.net/maven'
+            name = "forge"
+            url = "https://files.minecraftforge.net/maven"
         }
         maven {
-            name = 'SpongePowered'
             url = 'http://repo.spongepowered.org/maven'
         }
-        jcenter()
     }
-
     dependencies {
-        classpath "net.minecraftforge.gradle:ForgeGradle:${project.forgeGradleVersion}"
-        classpath "org.spongepowered:mixingradle:${project.mixinGradleVersion}"
+        classpath "net.minecraftforge.gradle:ForgeGradle:2.3-SNAPSHOT"
+        classpath 'org.spongepowered:mixingradle:0.6-SNAPSHOT'
     }
 }
 
 configurations {
     embed
-    compile.extendsFrom(embed)
+    implementation.extendsFrom(embed)
 }
 
-apply plugin: 'net.minecraftforge.gradle.forge'
+apply plugin: "net.minecraftforge.gradle.forge"
 apply plugin: 'org.spongepowered.mixin'
-apply plugin: 'java'
 
-version = 1.0
+version = modVersion
+group = modGroup
+archivesBaseName = modBaseName
 
-sourceCompatibility = 1.8
-targetCompatibility = 1.8
-compileJava.options.encoding = 'UTF-8'
+minecraft {
+    version = project.forgeVersion
+    runDir = "run"
+    mappings = project.mcpVersion
+}
 
 repositories {
     mavenCentral()
-
     maven {
-        name = 'spongepowered-repo'
-        url = 'http://repo.spongepowered.org/maven/'
-    }
-}
-
-dependencies {
-    embed("org.spongepowered:mixin:0.7.11-SNAPSHOT") { transitive = false }
-}
-
-minecraft {
-    version = project.minecraftVersion
-    mappings = project.mappings
-    runDir = 'run'
-}
-
-processResources {
-
-    inputs.property "version", project.version
-    inputs.property "mcversion", project.minecraft.version
-
-    from(sourceSets.main.resources.srcDirs) {
-
-        include 'mcmod.info'
-        expand 'version':project.version, 'mcversion':project.minecraft.version
-    }
-
-    from(sourceSets.main.resources.srcDirs) {
-
-        exclude 'mcmod.info'
+        url = 'http://repo.spongepowered.org/maven'
     }
 }
 
@@ -72,20 +44,37 @@ mixin {
     add sourceSets.main, "mixins.pvp.refmap.json"
 }
 
+dependencies {
+    embed("org.spongepowered:mixin:0.7.11-SNAPSHOT") { transitive = false }
+}
+
+processResources {
+    inputs.property "version", project.version
+    inputs.property "mcversion", project.minecraft.version
+
+    from(sourceSets.main.resources.srcDirs) {
+        include "mcmod.info"
+
+        expand "version": project.version, "mcversion": project.minecraft.version
+    }
+
+    from(sourceSets.main.resources.srcDirs) {
+        exclude "mcmod.info"
+    }
+}
 
 jar {
-    manifest.attributes(
-            "MixinConfigs": 'mixins.pvp.json',
-            "ForceLoadAsMod": "true",
-            "FMLCorePluginContainsFMLMod": 'true',
-            "FMLCorePlugin": 'net.pvp.launch.MixinLoader',
-            "TweakerClass": "net.pvp.launch.PvPTweaker",
-            "TweakOrder": 0,
-            "Manifest-Version": 1.0
-    )
-    dependsOn configurations.compile
+
     from(configurations.embed.collect { it.isDirectory() ? it : zipTree(it) }) {
 
-        exclude "LICENSE.txt", "META-INF/MANIFSET.MF", "META-INF/maven/**", "META-INF/*.RSA", "META-INF/*.SF", 'META-INF/*.DSA'
+        exclude "LICENSE.txt", "META-INF/MANIFSET.MF", "META-INF/maven/**", "META-INF/*.RSA", "META-INF/*.SF"
     }
+
+    manifest.attributes(
+            "FMLCorePluginContainsFMLMod": "true",
+            "ForceLoadAsMod": "true",
+            "TweakClass": "org.spongepowered.asm.launch.MixinTweaker",
+            "MixinConfigs": "mixins.pvp.json",
+            "FMLCorePlugin": "net.pvp.launch.MixinLoader"
+    )
 }

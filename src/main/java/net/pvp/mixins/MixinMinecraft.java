@@ -159,7 +159,6 @@ public abstract class MixinMinecraft {
     @Overwrite
     private void clickMouse()
     {
-        FMLSecurityManager
         if (this.leftClickCounter <= 0)
         {
             boolean modOn = PvPModding.isEnabled();
